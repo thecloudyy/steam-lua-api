@@ -29,6 +29,7 @@ if (strpos($path, '/api/download/') === 0) {
     http_response_code(404);
     echo json_encode(['error' => 'Endpoint not found']);
 }
+exit;
 
 function handleDownload($appid) {
     if (empty($appid)) {
@@ -116,15 +117,16 @@ function getAppidsFromGitHubAPI() {
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
 
     $appids = [];
 
     if ($httpCode === 200) {
         $data = json_decode($response, true);
-        foreach ($data as $item) {
-            if (preg_match('/^([0-9]+)\.lua$/', $item['name'], $matches)) {
-                $appids[] = $matches[1];
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if (preg_match('/^([0-9]+)\.lua$/', $item['name'] ?? '', $matches)) {
+                    $appids[] = $matches[1];
+                }
             }
         }
     }
@@ -142,7 +144,6 @@ function fetchFromGitHub($url) {
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
 
     return ($httpCode === 200) ? $response : null;
 }
