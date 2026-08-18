@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steam Lua API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0 20px;
+            border-bottom: 1px solid #1a1a1a;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        .header h1 span {
+            color: #e94560;
+        }
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        .header .base-url {
+            margin-top: 10px;
+            display: inline-block;
+            background: #111;
+            padding: 8px 24px;
+            border-radius: 30px;
+            border: 1px solid #222;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            color: #4caf50;
+        }
+        .status-bar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-bar .badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            background: #111;
+            border: 1px solid #222;
+        }
+        .badge.online {
+            color: #4caf50;
+            border-color: #4caf50;
+        }
+        .badge.cors {
+            color: #ffa726;
+            border-color: #ffa726;
+        }
+        .section {
+            background: #0f0f0f;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #e94560;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .section h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #ccc;
+            margin: 16px 0 8px 0;
+        }
+        .section p {
+            color: #999;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+        .endpoint {
+            background: #0a0a0a;
+            border-radius: 8px;
+            border-left: 3px solid #e94560;
+            padding: 14px 18px;
+            margin: 8px 0 12px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .endpoint .method {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #1a5a3a;
+            color: #4caf50;
+        }
+        .endpoint .url {
+            color: #4caf50;
+        }
+        .endpoint .desc {
+            color: #666;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            margin-left: auto;
+        }
+        .code-block {
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            border: 1px solid #1a1a1a;
+            margin: 8px 0 4px 0;
+            color: #aaa;
+        }
+        .code-block .green {
+            color: #4caf50;
+        }
+        .code-block .red {
+            color: #e94560;
+        }
+        .code-block .yellow {
+            color: #ffa726;
+        }
+        .code-block .blue {
+            color: #4a9af5;
+        }
+        .code-block .gray {
+            color: #555;
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 8px 0 4px 0;
+        }
+        th {
+            text-align: left;
+            padding: 10px 14px;
+            background: #0a0a0a;
+            color: #888;
+            border-bottom: 1px solid #1a1a1a;
+            font-weight: 500;
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #1a1a1a;
+            color: #bbb;
+        }
+        td code {
+            background: #0a0a0a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #e94560;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .quick-actions button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #1a1a2e;
+            color: #aaa;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid #222;
+        }
+        .quick-actions button:hover {
+            background: #2a2a4e;
+            color: #fff;
+        }
+        .quick-actions button.download-btn {
+            background: #1a5a3a;
+            color: #4caf50;
+            border-color: #1a5a3a;
+        }
+        .quick-actions button.download-btn:hover {
+            background: #2a7a4a;
+        }
+        .response-box {
+            margin-top: 12px;
+            padding: 14px 18px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            color: #aaa;
+            max-height: 200px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            display: none;
+        }
+        .response-box.show {
+            display: block;
+        }
+        .response-box .success {
+            color: #4caf50;
+        }
+        .response-box .error {
+            color: #e94560;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #1a1a1a;
+        }
+        .footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .endpoint {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .endpoint .desc {
+                margin-left: 0;
+            }
+            .section {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🎮 Steam <span>Lua</span> API</h1>
+        <p class="subtitle">Download Steam depot Lua scripts via a simple REST API</p>
+        <div class="base-url">https://steamluas.vercel.app/api/</div>
+    </div>
+    <div class="status-bar">
+        <span class="badge online">✅ API Online</span>
+        <span class="badge cors">🌐 CORS Enabled</span>
+    </div>
+    <div class="section">
+        <h2>📖 Overview</h2>
+        <p>
+            This API provides programmatic access to <strong>66,000+</strong> Lua files used for Steam depot installations.
+            Files are fetched from GitHub and served via a simple REST interface.
+        </p>
+        <br />
+        <p><strong>Data Source:</strong> <a href="https://github.com/thecloudyy/lua-database" target="_blank" style="color:#e94560;">thecloudyy/lua-database</a></p>
+        <p><strong>Total Files:</strong> 66,481+</p>
+    </div>
+    <div class="section">
+        <h2>🔗 Endpoints</h2>
+        <h3>1. Download Lua File</h3>
+        <p>Retrieve a Lua file by its Steam AppID.</p>
+        <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="url">/download/{appid}</span>
+            <span class="desc">Path parameter</span>
+        </div>
+        <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="url">/download?appid={appid}</span>
+            <span class="desc">Query parameter</span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                <tr><td><code>appid</code></td><td>integer</td><td>Steam AppID (e.g., 440)</td></tr>
+            </table>
+        </div>
+        <div class="quick-actions">
+            <button class="download-btn" onclick="testDownload(440)">📥 Test: 440</button>
+            <button class="download-btn" onclick="testDownload(730)">📥 Test: 730</button>
+            <button class="download-btn" onclick="testDownload(10)">📥 Test: 10</button>
+            <button onclick="testDownload(999999999)">❌ Test: 404</button>
+        </div>
+        <div class="response-box" id="downloadResponse"></div>
+        <h3 style="margin-top:24px;">2. List All AppIDs</h3>
+        <p>Get a complete list of all available AppIDs.</p>
+        <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="url">/list</span>
+            <span class="desc">Returns JSON</span>
+        </div>
+        <div class="quick-actions">
+            <button class="download-btn" onclick="testList()">📋 List All</button>
+        </div>
+        <div class="response-box" id="listResponse"></div>
+    </div>
+    <div class="section">
+        <h2>📝 Usage Examples</h2>
+        <h3>cURL</h3>
+        <div class="code-block">
+            <span class="gray"># Download Lua file</span><br />
+            curl -O <span class="green">https://steamluas.vercel.app/api/download/440</span><br /><br />
+            <span class="gray"># List all AppIDs</span><br />
+            curl <span class="green">https://steamluas.vercel.app/api/list</span>
+        </div>
+        <h3>Python</h3>
+        <div class="code-block">
+            import requests<br /><br />
+            <span class="gray"># Download</span><br />
+            response = requests.get(<span class="green">'https://steamluas.vercel.app/api/download/440'</span>)<br />
+            print(response.text)<br /><br />
+            <span class="gray"># List</span><br />
+            response = requests.get(<span class="green">'https://steamluas.vercel.app/api/list'</span>)<br />
+            data = response.json()<br />
+            print(data[<span class="yellow">'count'</span>], <span class="yellow">'files available'</span>)
+        </div>
+        <h3>JavaScript</h3>
+        <div class="code-block">
+            <span class="gray">// Download</span><br />
+            fetch(<span class="green">'https://steamluas.vercel.app/api/download/440'</span>)<br />
+              .then(res => res.text())<br />
+              .then(data => console.log(data));<br /><br />
+            <span class="gray">// List</span><br />
+            fetch(<span class="green">'https://steamluas.vercel.app/api/list'</span>)<br />
+              .then(res => res.json())<br />
+              .then(data => console.log(data.appids));
+        </div>
+    </div>
+    <div class="section">
+        <h2>📊 Responses</h2>
+        <h3>Success (Lua File)</h3>
+        <div class="code-block">
+            <span class="green">addappid</span>(440,0,<span class="yellow">"44ce5c5297a415a1a6f69c856037a5a2f..."</span>)
+        </div>
+        <h3>Success (List)</h3>
+        <div class="code-block">
+            {<br />
+            &nbsp;&nbsp;<span class="yellow">"count"</span>: <span class="green">66481</span>,<br />
+            &nbsp;&nbsp;<span class="yellow">"appids"</span>: [<span class="green">"10"</span>, <span class="green">"100"</span>, <span class="green">"1000000"</span>]<br />
+            }
+        </div>
+        <h3>Error Responses</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Status</th><th>Response</th><th>Description</th></tr>
+                <tr><td><code>400</code></td><td><code>{"error":"Missing appid parameter"}</code></td><td>No appid provided</td></tr>
+                <tr><td><code>404</code></td><td><code>{"error":"File not found"}</code></td><td>AppID does not exist</td></tr>
+                <tr><td><code>404</code></td><td><code>{"error":"Endpoint not found"}</code></td><td>Invalid endpoint</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="footer">
+        Powered by <a href="https://github.com/thecloudyy/lua-database" target="_blank">lua-database</a> ·
+        API: <a href="/api/list">/api/list</a> ·
+        <a href="https://github.com/thecloudyy/steam-lua-api" target="_blank">GitHub</a>
+    </div>
+</div>
+<script>
+    const API_BASE = 'https://steamluas.vercel.app/api';
+
+    function showResponse(id, content, isSuccess = true) {
+        const el = document.getElementById(id);
+        el.classList.add('show');
+        if (isSuccess) {
+            el.innerHTML = '<span class="success">✅ ' + content + '</span>';
+        } else {
+            el.innerHTML = '<span class="error">❌ ' + content + '</span>';
+        }
+    }
+
+    async function testDownload(appid) {
+        const el = document.getElementById('downloadResponse');
+        el.classList.add('show');
+        el.innerHTML = '⏳ Downloading...';
+
+        try {
+            const res = await fetch(API_BASE + '/download/' + appid);
+            const text = await res.text();
+
+            if (res.ok) {
+                el.innerHTML = '<span class="success">✅ Downloaded ' + appid + '.lua</span>\n\n' + text;
+            } else {
+                try {
+                    const json = JSON.parse(text);
+                    el.innerHTML = '<span class="error">❌ ' + json.error + '</span>';
+                } catch {
+                    el.innerHTML = '<span class="error">❌ ' + res.status + ' - ' + text + '</span>';
+                }
+            }
+        } catch (err) {
+            el.innerHTML = '<span class="error">❌ Request failed: ' + err.message + '</span>';
+        }
+    }
+
+    async function testList() {
+        const el = document.getElementById('listResponse');
+        el.classList.add('show');
+        el.innerHTML = '⏳ Loading...';
+
+        try {
+            const res = await fetch(API_BASE + '/list');
+            const data = await res.json();
+
+            if (res.ok) {
+                const preview = data.appids.slice(0, 20).join(', ');
+                const more = data.appids.length > 20 ? ' ... and ' + (data.appids.length - 20) + ' more' : '';
+                el.innerHTML = '<span class="success">✅ ' + data.count + ' files available</span>\n\n' +
+                    'First 20: ' + preview + more + '\n\n' +
+                    JSON.stringify(data, null, 2);
+            } else {
+                el.innerHTML = '<span class="error">❌ ' + (data.error || 'Failed to fetch list') + '</span>';
+            }
+        } catch (err) {
+            el.innerHTML = '<span class="error">❌ Request failed: ' + err.message + '</span>';
+        }
+    }
+
+    window.addEventListener('load', function() {
+        testList();
+    });
+</script>
+</body>
+</html>
