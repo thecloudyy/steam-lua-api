@@ -25,6 +25,7 @@ if (strpos($path, '/api/download/') === 0) {
     handleList();
 } else {
     http_response_code(404);
+    header('Content-Type: application/json');
     echo json_encode(['error' => 'Endpoint not found']);
 }
 exit;
@@ -32,7 +33,8 @@ exit;
 function handleDownload($appid) {
     if (empty($appid)) {
         http_response_code(400);
-        echo "Error: Missing appid parameter";
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Missing appid parameter']);
         return;
     }
 
@@ -41,7 +43,8 @@ function handleDownload($appid) {
 
     if ($content === null) {
         http_response_code(404);
-        echo "Not Found";
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'File not found']);
         return;
     }
 
