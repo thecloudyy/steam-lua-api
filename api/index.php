@@ -23,8 +23,6 @@ if (strpos($path, '/api/download/') === 0) {
     handleDownload($appid);
 } elseif ($path === '/api/list' || $path === '/api/list/') {
     handleList();
-} elseif ($path === '/api/search') {
-    handleSearch($_GET['q'] ?? '');
 } else {
     http_response_code(404);
     echo json_encode(['error' => 'Endpoint not found']);
@@ -71,39 +69,6 @@ function handleList() {
     echo json_encode([
         'count' => count($appids),
         'appids' => $appids
-    ]);
-}
-
-function handleSearch($query) {
-    $query = trim($query);
-    if (empty($query)) {
-        handleList();
-        return;
-    }
-
-    $json = fetchFromGitHub(GITHUB_LIST_URL);
-    
-    if ($json !== null) {
-        $data = json_decode($json, true);
-        if (isset($data['appids']) && is_array($data['appids'])) {
-            $appids = $data['appids'];
-        } else {
-            $appids = [];
-        }
-    } else {
-        $appids = getAppidsFromGitHubAPI();
-    }
-
-    $pattern = '/' . preg_quote($query, '/') . '/i';
-    $results = array_filter($appids, function($id) use ($pattern) {
-        return preg_match($pattern, $id);
-    });
-
-    header('Content-Type: application/json');
-    echo json_encode([
-        'query' => $query,
-        'count' => count($results),
-        'appids' => array_values($results)
     ]);
 }
 
